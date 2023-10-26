@@ -1,4 +1,4 @@
-module Convert (stringToBinary) where
+module Convert (stringToBinary, stringToInt) where
 
 import Data.Char (ord)
 
@@ -24,3 +24,8 @@ bitsToString ints =
 
 stringToBinary :: String -> String
 stringToBinary = bitsToString . stringToBits
+
+stringToInt :: String -> Int
+stringToInt str
+  | not . any (`elem` ['0'..'9']) $ str = 0
+  | otherwise = read str :: Int
