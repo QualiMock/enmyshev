@@ -1,4 +1,4 @@
-module Convert (stringToBinary, stringToInt) where
+module Convert (stringToBits, stringToInt, splitByN, addTrailingZeroes) where
 
 import Data.Char (ord)
 
@@ -22,10 +22,21 @@ bitsToString [1] = "1"
 bitsToString ints =
   (show . head $ ints) ++ (bitsToString . tail $ ints)
 
-stringToBinary :: String -> String
-stringToBinary = bitsToString . stringToBits
+stringToBinaryString :: String -> String
+stringToBinaryString = bitsToString . stringToBits
 
 stringToInt :: String -> Int
 stringToInt str
   | not . any (`elem` ['0'..'9']) $ str = 0
   | otherwise = read str :: Int
+
+splitByN :: [Int] -> Int -> [[Int]]
+splitByN list size
+  | size <= 1 = []
+  | null list = []
+  | length list == size = [list]
+  | length list < size = [addTrailingZeroes list (size - length list `rem` size)]
+  | otherwise = take size list : splitByN (drop size list) size
+
+addTrailingZeroes :: [Int] -> Int -> [Int]
+addTrailingZeroes list missing = list ++ replicate missing 0
