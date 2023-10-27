@@ -1,4 +1,4 @@
-module Convert (stringToBits, stringToInt, splitByN, addTrailingZeroes) where
+module Convert (stringToBinaryString, stringToInt, splitByN, addTrailingZeroes) where
 
 import Data.Char (ord)
 
@@ -30,7 +30,7 @@ stringToInt str
   | not . any (`elem` ['0'..'9']) $ str = 0
   | otherwise = read str :: Int
 
-splitByN :: [Int] -> Int -> [[Int]]
+splitByN :: String -> Int -> [String]
 splitByN list size
   | size <= 1 = []
   | null list = []
@@ -38,5 +38,5 @@ splitByN list size
   | length list < size = [addTrailingZeroes list (size - length list `rem` size)]
   | otherwise = take size list : splitByN (drop size list) size
 
-addTrailingZeroes :: [Int] -> Int -> [Int]
-addTrailingZeroes list missing = list ++ replicate missing 0
+addTrailingZeroes :: String -> Int -> String
+addTrailingZeroes list missing = list ++ replicate missing '0'

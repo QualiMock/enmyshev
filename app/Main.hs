@@ -1,7 +1,7 @@
 module Main where
 
-import Encode (encode)
-import Convert (stringToInt, stringToBits)
+-- import Encode (encode)
+import Convert (stringToInt, stringToBinaryString, splitByN)
 
 import Data.Char (ord)
 import System.Environment
@@ -21,9 +21,10 @@ main = do
       let outputClass = stringToInt $ last args
       if inputClass > 0 then do
              fileContents <- readFile inputFile
-             let encodedContents = encode fileContents inputClass outputClass;
-             let dictionary = makeDictionary (nub encodedContents) [0..(length encodedContents)]
-             mapM_ print dictionary
+             let bitChunks = splitByN (stringToBinaryString fileContents) inputClass;
+             print bitChunks
+             -- let dictionary = makeDictionary (nub bitChunks) (map  [0..(length bitChunks)])
+             -- mapM_ print dictionary
         else print "Input class size should be more than 0"
       -- writeFile outputFile encryptedContents;
       -- print ("Encode " ++ inputFile ++ " -> " ++ outputFile)
@@ -31,7 +32,7 @@ main = do
 
 getTrailingZeroes binaryStream inputClass = inputClass - (length binaryStream `rem` inputClass)
 
-makeDictionary :: [[Int]] -> [Int] -> [([Int], Int)]
+makeDictionary :: [String] -> [String] -> [(String, String)]
 makeDictionary [] [] = []
 makeDictionary [] _ = []
 makeDictionary _ [] = []

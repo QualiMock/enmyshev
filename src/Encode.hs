@@ -1,5 +1,5 @@
-module Encode (encode) where
-import Convert (stringToBits, splitByN)
+module Encode where
+import Convert (splitByN)
 
-encode :: String -> Int -> Int -> [[Int]]
-encode str inputClass outputClass = splitByN (stringToBits str) inputClass
+-- encode :: String -> ([Int], Int) -> [[Int]]
+-- encode str inputClass outputClass = splitByN (stringToBits str) inputClass
