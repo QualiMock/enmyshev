@@ -30,7 +30,7 @@ main = do
                putStrLn $ "File " ++ inputFile ++ " cannot be encoded\n\t"
                ++ "with output class size " ++ show outputClass
                else mapM_ putStrLn encodedContents
-        else putStrLn "Input class size should be more than 0"
+        else putStrLn "Input class size should be greater than 0"
       -- writeFile outputFile encryptedContents;
       -- print ("Encode " ++ inputFile ++ " -> " ++ outputFile)
   }
