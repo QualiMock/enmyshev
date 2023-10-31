@@ -1,12 +1,17 @@
 module Main where
 
--- import Encode (encode)
-import Convert (stringToInt, stringToBinaryString, splitByN, takeLast, toBinary, addHeadingZeroes, bitsToString)
+import Encode (encode)
+import Convert (stringToInt)
 
 import System.Environment
 import System.IO
 import GHC.Read (list)
 import Data.List (nub)
+
+checkArgs :: [String] -> Bool
+checkArgs args
+  | length args < 4 = False
+  | otherwise = True
 
 main = do
   {
@@ -20,33 +25,12 @@ main = do
       let outputClass = stringToInt $ last args
       if inputClass > 0 then do
              fileContents <- readFile inputFile
-             let bitChunks = splitByN (stringToBinaryString fileContents) inputClass
-             let uniqueChunks = nub bitChunks
-             if outputClass > getMinOutputClass uniqueChunks then do
-               let encodeSequence = map (tail . bitsToString . toBinary) [0..(length uniqueChunks)]
-               let outputWords = map (`addHeadingZeroes` outputClass) encodeSequence
-               let dictionary = makeDictionary uniqueChunks outputWords
-               print dictionary
-             else
-               putStrLn ("Output class size " ++ show outputClass ++ " is to small to encode:\n\t" ++
-                         inputFile ++ "\nwith input class size " ++ show inputClass)
-        else print "Input class size should be more than 0"
+             let encodedContents = encode fileContents inputClass outputClass
+             if null encodedContents then
+               putStrLn $ "File " ++ inputFile ++ " cannot be encoded\n\t"
+               ++ "with output class size " ++ show outputClass
+               else mapM_ putStrLn encodedContents
+        else putStrLn "Input class size should be more than 0"
       -- writeFile outputFile encryptedContents;
       -- print ("Encode " ++ inputFile ++ " -> " ++ outputFile)
   }
-
-getTrailingZeroes binaryStream inputClass = inputClass - (length binaryStream `rem` inputClass)
-
-getMinOutputClass uniqueChunks = ceiling (logBase 2 (fromIntegral . length $ uniqueChunks))
-
-makeDictionary :: [String] -> [String] -> [(String, String)]
-makeDictionary [] [] = []
-makeDictionary [] _ = []
-makeDictionary _ [] = []
-makeDictionary (chunk:uniqueChunks) (key:keys) =
-  (chunk, key) : makeDictionary uniqueChunks keys
-
-checkArgs :: [String] -> Bool
-checkArgs args
-  | length args < 4 = False
-  | otherwise = True
