@@ -1,19 +1,22 @@
-module Convert (stringToBinaryString, stringToInt, splitByN, addTrailingZeroes) where
+module Convert (stringToBinaryString,
+                stringToInt,
+                toBinary,
+                bitsToString,
+                splitByN,
+                addTrailingZeroes,
+                addHeadingZeroes,
+                takeLast) where
 
 import Data.Char (ord)
+import Data.Foldable (Foldable(foldl'))
 
-toBinary :: Int -> [Int]
-toBinary = go 8 []
-  where
-    go 0 acc _ = reverse acc
-    go n acc x = go (n - 1) (bit : acc) x'
-      where
-        (x', bit) = x `divMod` 2
+toBinary 0 = [0]
+toBinary n
+  | odd n  = toBinary (n `div` 2) ++ [1]
+  | even n = toBinary (n `div` 2) ++ [0]
 
-toUnicode :: String -> [Int]
 toUnicode = map ord
 
-stringToBits :: String -> [Int]
 stringToBits = concatMap toBinary . toUnicode
 
 bitsToString :: [Int] -> String
@@ -22,7 +25,6 @@ bitsToString [1] = "1"
 bitsToString ints =
   (show . head $ ints) ++ (bitsToString . tail $ ints)
 
-stringToBinaryString :: String -> String
 stringToBinaryString = bitsToString . stringToBits
 
 stringToInt :: String -> Int
@@ -38,5 +40,9 @@ splitByN list size
   | length list < size = [addTrailingZeroes list (size - length list `rem` size)]
   | otherwise = take size list : splitByN (drop size list) size
 
-addTrailingZeroes :: String -> Int -> String
 addTrailingZeroes list missing = list ++ replicate missing '0'
+
+addHeadingZeroes list size = replicate (size - length list) '0' ++ list
+
+takeLast :: Int -> [a] -> [a]
+takeLast n xs = foldl' (const . drop 1) xs (drop n xs)
