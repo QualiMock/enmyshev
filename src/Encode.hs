@@ -15,8 +15,7 @@ makeDictionary (chunk:uniqueChunks) (key:keys) =
 
 encode :: String -> Int -> Int -> [String]
 encode str inputClass outputClass = do
-  let bitChunks = splitByN (stringToBinaryString str) inputClass
-  let uniqueChunks = nub bitChunks
+  let uniqueChunks = nub $ splitByN (stringToBinaryString str) inputClass
   if outputClass > getMinOutputClass uniqueChunks
     then do
       let encodeSequence = map (tail . bitsToString . toBinary) [0 .. (length uniqueChunks)]
