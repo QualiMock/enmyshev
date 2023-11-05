@@ -17,7 +17,7 @@ main = do
   {
     args <- getArgs;
     if not . checkArgs $ args then
-      print "Insufficient arguments"
+      putStrLn "Insufficient arguments"
     else do
       let inputFile = head args
       let outputFile = args !! 1
