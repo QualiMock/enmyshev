@@ -3,6 +3,7 @@ module Convert (stringToBinaryString,
                 toBinary,
                 bitsToString,
                 splitByN,
+                joinList,
                 addTrailingZeroes,
                 addHeadingZeroes,
                 takeLast) where
@@ -39,6 +40,10 @@ splitByN list size
   | length list == size = [list]
   | length list < size = [addTrailingZeroes list (size - length list `rem` size)]
   | otherwise = take size list : splitByN (drop size list) size
+
+joinList :: [String] -> String
+joinList [x] = x
+joinList (x:xs) = x ++ joinList xs
 
 addTrailingZeroes list missing = list ++ replicate missing '0'
 
