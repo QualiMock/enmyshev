@@ -13,7 +13,7 @@ makeDictionary _ [] = []
 makeDictionary (chunk:uniqueChunks) (key:keys) =
   (chunk, key) : makeDictionary uniqueChunks keys
 
-encode :: String -> Int -> Int -> String
+encode :: String -> Int -> Int -> (String, [(String, String)])
 encode str inputClass outputClass = do
   let binaryChunks = splitByN (stringToBinaryString str) inputClass
   let uniqueChunks = nub binaryChunks
@@ -22,8 +22,8 @@ encode str inputClass outputClass = do
       let encodeSequence = map (tail . bitsToString . toBinary) [0 .. (length uniqueChunks)]
       let outputWords = map (`addHeadingZeroes` outputClass) encodeSequence
       let dictionary = makeDictionary uniqueChunks outputWords
-      joinList . map (substitute dictionary) $ binaryChunks
-    else []
+      (joinList . map (substitute dictionary) $ binaryChunks, dictionary)
+    else ([], [])
 
 substitute :: [(String, String)] -> String -> String
 substitute (pair:dictionary) str

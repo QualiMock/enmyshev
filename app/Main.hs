@@ -1,7 +1,7 @@
 module Main where
 
 import Encode (encode)
-import Convert (stringToInt)
+import Convert (stringToInt, dictionaryToString)
 
 import System.Environment
 import System.IO
@@ -27,8 +27,11 @@ main = do
              if null encodedContents then
                putStrLn $ "File " ++ inputFile ++ " cannot be encoded\n\t"
                ++ "with output class size " ++ show outputClass
-               else putStrLn encodedContents
+               else do
+               let dictionary = dictionaryToString (snd encodedContents)
+               writeFile outputFile $ fst encodedContents;
+               writeFile (outputFile ++ ".dict") dictionary
+               putStrLn $ "Encode " ++ inputFile ++ " -> " ++ outputFile ++
+                 "\nDictionary -> " ++ outputFile ++ ".dict\n" ++ dictionary
         else putStrLn "Input class size should be greater than 0"
-      -- writeFile outputFile encryptedContents;
-      -- print ("Encode " ++ inputFile ++ " -> " ++ outputFile)
   }
