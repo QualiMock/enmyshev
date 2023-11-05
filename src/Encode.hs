@@ -4,7 +4,7 @@ import Convert (splitByN, joinList, stringToBinaryString, bitsToString, toBinary
 
 import Data.List (nub)
 
-getMinOutputClass uniqueChunks = ceiling (logBase 2 (fromIntegral . length $ uniqueChunks))
+getMinOutputClass uniqueChunks = ceiling $ logBase 2 $ fromIntegral . length $ uniqueChunks
 
 makeDictionary :: [String] -> [String] -> [(String, String)]
 makeDictionary [] [] = []
