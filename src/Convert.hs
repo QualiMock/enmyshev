@@ -6,7 +6,8 @@ module Convert (stringToBinaryString,
                 joinList,
                 addTrailingZeroes,
                 addHeadingZeroes,
-                takeLast) where
+                takeLast,
+                dictionaryToString) where
 
 import Data.Char (ord)
 import Data.Foldable (Foldable(foldl'))
@@ -51,3 +52,6 @@ addHeadingZeroes list size = replicate (size - length list) '0' ++ list
 
 takeLast :: Int -> [a] -> [a]
 takeLast n xs = foldl' (const . drop 1) xs (drop n xs)
+
+dictionaryToString [] = []
+dictionaryToString (pair:dictionary) = fst pair ++ " " ++ snd pair ++ "\n" ++ dictionaryToString dictionary
