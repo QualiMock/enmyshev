@@ -6,6 +6,7 @@ import Encode (encode)
 import System.Environment
 import Data.Word
 import qualified Data.ByteString as BS
+import Data.ByteString.Char8 (unpack)
 
 checkArgs :: [String] -> Bool
 checkArgs args
@@ -38,7 +39,7 @@ main = do
                  "|\n" ++
                  "|\n" ++
                  "V\n" ++
-                 "[" ++ outputFile ++ "] \n" ++ show (fst encodedContents) ++ "\n" ++
+                 "[" ++ outputFile ++ "] \n" ++ unpack (fst encodedContents) ++ "\n" ++
                  "[Dictionary] \n" ++ dictionary
         else putStrLn "Input class size should be greater than 0"
   }
