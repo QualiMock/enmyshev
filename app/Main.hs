@@ -1,19 +1,21 @@
 module Main where
 
-import Encode (encode)
 import Convert (stringToInt, dictionaryToString)
+import Encode (encode)
 
 import System.Environment
-import System.IO
+import Data.Word
+import qualified Data.ByteString as BS
 
 checkArgs :: [String] -> Bool
 checkArgs args
   | length args < 4 = False
   | otherwise = True
 
+main :: IO ()
 main = do
   {
-    args <- getArgs;
+  args <- getArgs;
     if not . checkArgs $ args then
       putStrLn "Insufficient arguments"
     else do
@@ -29,9 +31,14 @@ main = do
                ++ "with output class size " ++ show outputClass
                else do
                let dictionary = dictionaryToString (snd encodedContents)
-               writeFile outputFile $ fst encodedContents;
+               BS.writeFile outputFile $ fst encodedContents;
                writeFile (outputFile ++ ".dict") dictionary
-               putStrLn $ "Encode " ++ inputFile ++ " -> " ++ outputFile ++
-                 "\nDictionary -> " ++ outputFile ++ ".dict\n" ++ dictionary
+               putStrLn $
+                 "[" ++ inputFile ++ "] \n" ++ fileContents ++ "\n" ++
+                 "|\n" ++
+                 "|\n" ++
+                 "V\n" ++
+                 "[" ++ outputFile ++ "] \n" ++ show (fst encodedContents) ++ "\n" ++
+                 "[Dictionary] \n" ++ dictionary
         else putStrLn "Input class size should be greater than 0"
   }

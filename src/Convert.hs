@@ -1,57 +1,58 @@
-module Convert (stringToBinaryString,
-                stringToInt,
+module Convert (stringToInt,
                 toBinary,
-                bitsToString,
-                splitByN,
-                joinList,
+                toStringOfBinaries,
+                dictionaryToString,
+                splitByNBits,
                 addTrailingZeroes,
-                addHeadingZeroes,
-                takeLast,
-                dictionaryToString) where
+                joinList,
+                fromBinary) where
 
-import Data.Char (ord)
-import Data.Foldable (Foldable(foldl'))
-
-toBinary 0 = [0]
-toBinary n
-  | odd n  = toBinary (n `div` 2) ++ [1]
-  | even n = toBinary (n `div` 2) ++ [0]
-
-toUnicode = map ord
-
-stringToBits = concatMap toBinary . toUnicode
-
-bitsToString :: [Int] -> String
-bitsToString [0] = "0"
-bitsToString [1] = "1"
-bitsToString ints =
-  (show . head $ ints) ++ (bitsToString . tail $ ints)
-
-stringToBinaryString = bitsToString . stringToBits
+import Data.Word (Word8)
+import Data.Bits
+import Data.List (foldl')
 
 stringToInt :: String -> Int
 stringToInt str
   | not . any (`elem` ['0'..'9']) $ str = 0
   | otherwise = read str :: Int
 
-splitByN :: String -> Int -> [String]
-splitByN list size
-  | size <= 1 = []
-  | null list = []
-  | length list == size = [list]
-  | length list < size = [addTrailingZeroes list (size - length list `rem` size)]
-  | otherwise = take size list : splitByN (drop size list) size
+toBinary :: Word8 -> [Bool]
+toBinary x = reverse [testBit x i | i <- [0 .. finiteBitSize x - 1]]
 
-joinList :: [String] -> String
-joinList [x] = x
-joinList (x:xs) = x ++ joinList xs
+fromBinary :: [Bool] -> Word8
+fromBinary = foldl' (\acc b -> (acc `shiftL` 1) .|. fromBool b) 0
+  where
+    fromBool True = 1
+    fromBool False = 0
 
-addTrailingZeroes list missing = list ++ replicate missing '0'
-
-addHeadingZeroes list size = replicate (size - length list) '0' ++ list
-
-takeLast :: Int -> [a] -> [a]
-takeLast n xs = foldl' (const . drop 1) xs (drop n xs)
+toStringOfBinaries :: [Bool] -> String
+toStringOfBinaries (x:xs)
+  | null xs && x = "1"
+  | null xs && not x = "0"
+  | x = '1' : toStringOfBinaries xs
+  | not x = '0' : toStringOfBinaries xs
 
 dictionaryToString [] = []
-dictionaryToString (pair:dictionary) = fst pair ++ " " ++ snd pair ++ "\n" ++ dictionaryToString dictionary
+dictionaryToString (pair:dictionary) = toStringOfBinaries (fst pair) ++ " " ++
+                                       toStringOfBinaries (snd pair) ++ "\n" ++
+                                       dictionaryToString dictionary
+
+splitByNBits :: [Bool] -> Int -> ([[Bool]], Int)
+splitByNBits list size
+  | size <= 1 = ([], 0)
+  | null list = ([], 0)
+  | length list == size = ([list], 0)
+  | length list < size = do
+      let missing = size - length list `rem` size
+      ([addTrailingZeroes list missing], 0)
+  | otherwise = do
+      let splet = splitByNBits (drop size list) size
+      let trailing = snd splet
+      (take size list : fst splet, trailing)
+
+addTrailingZeroes :: [Bool] -> Int -> [Bool]
+addTrailingZeroes list missing = list ++ replicate missing False
+
+joinList :: [[a]] -> [a]
+joinList [x] = x
+joinList (x:xs) = x ++ joinList xs
