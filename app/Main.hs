@@ -36,10 +36,9 @@ main = do
                writeFile (outputFile ++ ".dict") dictionary
                putStrLn $
                  "[" ++ inputFile ++ "] \n" ++ fileContents ++ "\n" ++
-                 "|\n" ++
-                 "|\n" ++
-                 "V\n" ++
-                 "[" ++ outputFile ++ "] \n" ++ unpack (fst encodedContents) ++ "\n" ++
+                 "    |\n" ++
+                 "    V\n" ++
+                 "[" ++ outputFile ++ "] \n" ++ unpack (fst encodedContents) ++ "\n\n" ++
                  "[Dictionary] \n" ++ dictionary
         else putStrLn "Input class size should be greater than 0"
   }
